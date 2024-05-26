@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/button.css">
+    <link rel="stylesheet" type="text/css" href="/css/backgroundbutton.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/icon.png">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>김고 네컷</title>
+    <style>
+        @font-face {
+            font-family: "SeguSegu-Regular";
+            src: url("/SeguSegu-Regular.woff") format("woff");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: "SeguSegu-Regular";
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background-color: white;
+        }
+
+        .container {
+            width: 390px;
+            height: 1100px; /* 높이를 사진 영역에 맞게 조정 */
+            background-size: cover;
+            position: relative;
+        }
+
+        .photos {
+            margin: 0;
+            padding-top: 15px;
+        }
+
+        .photo-frame {
+            margin: 15px 20px;
+            height: 200px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .photo-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            z-index: -1;
+        }
+
+        .footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .f-title {
+            color: black;
+            font-size: 45px;
+            font-weight: 900;
+        }
+
+        .f-date {
+            color: black;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .photo_description {
+            color: white;
+            background-color: black;
+            padding: 0 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s linear;
+        }
+
+        .photo-frame:hover .photo_description {
+            opacity: 1;
+        }
+
+        #videoElement {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        #captureButton {
+            display: none;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .backgroundbuttons {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .backgroundbuttons button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .backgroundbuttons button:hover {
+            background-color: #45a049;
+        }
+
+        #captureContainerButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            position: absolute;
+            top: 70%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        #captureContainerButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="capture_area">
+        <div class="background-image" style="background-image: url('/frame.png') no-repeat center center; background-size: cover;"></div>
+        <div class="container" id="capture_content">
+        <div class="photos">
+            <div id="image1" class="photo-frame" onclick="startCamera(1)">
+                <div class="photo-background" id="photo-background-1"></div>
+                <span id="desc1" class="photo_description">첫번째 사진 :)</span>
+            </div>
+            <div id="image2" class="photo-frame" onclick="startCamera(2)">
+                <div class="photo-background" id="photo-background-2"></div>
+                <span id="desc2" class="photo_description">두번째 사진 :)</span>
+            </div>
+            <div id="image3" class="photo-frame" onclick="startCamera(3)">
+                <div class="photo-background" id="photo-background-3"></div>
+                <span id="desc3" class="photo_description">세번째 사진 :)</span>
+            </div>
+            <div id="image4" class="photo-frame" onclick="startCamera(4)">
+                <div class="photo-background" id="photo-background-4"></div>
+                <span id="desc4" class="photo_description">네번째 사진 :)</span>
+            </div>
+        </div>
+        <div class="footer">
+            <p class="f-title">김고 네컷</p>
+            <p class="f-date" id="current-date"></p>
+        </div>
+    </div>
+    </div>
+    <div class="backgroundbuttons">
+        <button onclick="changeBackground('/background1.png')">배경 1</button>
+        <button onclick="changeBackground('/frame.png')">배경 2</button>
+        <button onclick="changeBackground('/frame_jinsung.png')">배경 3</button>
+        <button onclick="changeBackground('/background4.png')">배경 4</button>
+    </div>
+    <video id="videoElement" width="320" height="240" autoplay></video>
+    <button id="captureButton" class="bubbly-button" onclick="capturePhoto()">📷사진 촬영📷</button>
+
+    <!-- HTML2Canvas 라이브러리 포함 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="/js/button.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var currentDate = new Date();
+            var formattedDate = currentDate.getFullYear() + '.' +
+                ('0' + (currentDate.getMonth() + 1)).slice(-2) + '.' +
+                ('0' + currentDate.getDate()).slice(-2);
+            document.getElementById('current-date').textContent = formattedDate;
+        });
+
+        let currentImageId;
+
+        function startCamera(id) {
+            currentImageId = id;
+            const video = document.getElementById('videoElement');
+            const captureButton = document.getElementById('captureButton');
+            video.style.display = 'block';
+            captureButton.style.display = 'block';
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing the camera: ", err);
+                });
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('videoElement');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageDataUrl = canvas.toDataURL('image/png');
+            const photoBackground = document.getElementById('photo-background-' + currentImageId);
+            photoBackground.style.backgroundImage = `url(${imageDataUrl})`;
+            photoBackground.style.backgroundSize = 'cover';
+
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+
+            video.style.display = 'none';
+            document.getElementById('captureButton').style.display = 'none';
+        }
+
+        function changeBackground(backgroundImage) {
+            const container = document.querySelector('.container');
+            container.style.backgroundImage = `url(${backgroundImage})`;
+        }
+
+        // 캡쳐 기능 추가
+        function captureContainer() {
+            const captureArea = document.getElementById('capture_area');
+            html2canvas(captureArea).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                document.getElementById('capturedImage').value = imgData;
+                document.getElementById('emailForm').style.display = 'block';
+            });
+        }
+    </script>
+
+    <!-- 캡쳐 버튼 추가 -->
+    <button id="captureContainerButton" onclick="captureContainer()">화면 캡쳐</button>
+
+    <!-- 이메일 전송 폼 추가 -->
+    <form id="emailForm" style="display:none;" method="POST" action="/send-email">
+        <input type="hidden" id="capturedImage" name="capturedImage">
+        <label for="email">이메일:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">전송</button>
+    </form>
+</body>
+</html>
